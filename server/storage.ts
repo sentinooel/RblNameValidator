@@ -1,4 +1,6 @@
 import { usernameChecks, type UsernameCheck, type InsertUsernameCheck } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc, count, sql } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<any | undefined>;
@@ -16,51 +18,36 @@ export interface IStorage {
   clearUsernameChecks(): Promise<void>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, any>;
-  private usernameChecks: Map<number, UsernameCheck>;
-  private currentUserId: number;
-  private currentCheckId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.usernameChecks = new Map();
-    this.currentUserId = 1;
-    this.currentCheckId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<any | undefined> {
-    return this.users.get(id);
+    // User functionality not implemented in current schema
+    return undefined;
   }
 
   async getUserByUsername(username: string): Promise<any | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    // User functionality not implemented in current schema
+    return undefined;
   }
 
   async createUser(insertUser: any): Promise<any> {
-    const id = this.currentUserId++;
-    const user = { ...insertUser, id };
-    this.users.set(id, user);
-    return user;
+    // User functionality not implemented in current schema
+    return insertUser;
   }
 
   async saveUsernameCheck(insertCheck: InsertUsernameCheck): Promise<UsernameCheck> {
-    const id = this.currentCheckId++;
-    const check: UsernameCheck = {
-      ...insertCheck,
-      id,
-      checkedAt: new Date(),
-    };
-    this.usernameChecks.set(id, check);
+    const [check] = await db
+      .insert(usernameChecks)
+      .values(insertCheck)
+      .returning();
     return check;
   }
 
   async getRecentChecks(limit = 10): Promise<UsernameCheck[]> {
-    const checks = Array.from(this.usernameChecks.values())
-      .sort((a, b) => b.checkedAt.getTime() - a.checkedAt.getTime())
-      .slice(0, limit);
+    const checks = await db
+      .select()
+      .from(usernameChecks)
+      .orderBy(desc(usernameChecks.checkedAt))
+      .limit(limit);
     return checks;
   }
 
@@ -70,23 +57,31 @@ export class MemStorage implements IStorage {
     takenCount: number;
     avgResponseTime: number;
   }> {
-    const checks = Array.from(this.usernameChecks.values());
-    const totalChecks = checks.length;
-    const availableCount = checks.filter(c => c.isAvailable).length;
-    const takenCount = checks.filter(c => !c.isAvailable).length;
+    const [totalResult] = await db
+      .select({ count: count() })
+      .from(usernameChecks);
+    
+    const [availableResult] = await db
+      .select({ count: count() })
+      .from(usernameChecks)
+      .where(eq(usernameChecks.isAvailable, true));
+    
+    const [takenResult] = await db
+      .select({ count: count() })
+      .from(usernameChecks)
+      .where(eq(usernameChecks.isAvailable, false));
     
     return {
-      totalChecks,
-      availableCount,
-      takenCount,
+      totalChecks: totalResult.count,
+      availableCount: availableResult.count,
+      takenCount: takenResult.count,
       avgResponseTime: 0.8, // Mock average response time
     };
   }
 
   async clearUsernameChecks(): Promise<void> {
-    this.usernameChecks.clear();
-    this.currentCheckId = 1;
+    await db.delete(usernameChecks);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

@@ -145,6 +145,13 @@ The application is configured for deployment on Replit with the following setup:
   - Fixed clear history button with proper API integration and toast notifications
   - Enhanced user experience with real-time data refresh for both stats and recent checks
   - Application ready for Vercel deployment
+- July 02, 2025. Database migration completed:
+  - Successfully migrated from in-memory storage to PostgreSQL database
+  - Created database connection using Neon serverless PostgreSQL
+  - Updated storage interface to use Drizzle ORM with database operations
+  - All username checks now persist in database for reliable data storage
+  - Pushed database schema using drizzle-kit
+  - Application now uses DatabaseStorage instead of MemStorage
 
 ## User Preferences
 
