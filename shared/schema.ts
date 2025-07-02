@@ -1,5 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp } from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { pgTable, text, serial, boolean, timestamp } from "drizzle-orm/pg-core";
 import { z } from "zod";
 
 export const usernameChecks = pgTable("username_checks", {
@@ -9,13 +8,23 @@ export const usernameChecks = pgTable("username_checks", {
   checkedAt: timestamp("checked_at").notNull().defaultNow(),
 });
 
-export const insertUsernameCheckSchema = createInsertSchema(usernameChecks).omit({
-  id: true,
-  checkedAt: true,
+// Simple schema definitions to avoid type inference issues
+export const insertUsernameCheckSchema = z.object({
+  username: z.string(),
+  isAvailable: z.boolean(),
 });
 
-export type InsertUsernameCheck = z.infer<typeof insertUsernameCheckSchema>;
-export type UsernameCheck = typeof usernameChecks.$inferSelect;
+export type InsertUsernameCheck = {
+  username: string;
+  isAvailable: boolean;
+};
+
+export type UsernameCheck = {
+  id: number;
+  username: string;
+  isAvailable: boolean;
+  checkedAt: Date;
+};
 
 export const usernameValidationSchema = z.object({
   username: z.string()

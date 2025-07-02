@@ -37,9 +37,12 @@ export class DatabaseStorage implements IStorage {
   async saveUsernameCheck(insertCheck: InsertUsernameCheck): Promise<UsernameCheck> {
     const [check] = await db
       .insert(usernameChecks)
-      .values(insertCheck)
+      .values({
+        username: insertCheck.username,
+        isAvailable: insertCheck.isAvailable
+      })
       .returning();
-    return check;
+    return check as UsernameCheck;
   }
 
   async getRecentChecks(limit = 10): Promise<UsernameCheck[]> {

@@ -1,0 +1,8 @@
+server/storage.ts(40,15): error TS2769: No overload matches this call.
+  Overload 1 of 2, '(value: { isAvailable: boolean | SQL<unknown> | Placeholder<string, any>; username: string | SQL<unknown> | Placeholder<string, any>; }): PgInsertBase<PgTableWithColumns<{ name: "username_checks"; schema: undefined; columns: { ...; }; dialect: "pg"; }>, ... 4 more ..., never>', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type '{ isAvailable: boolean | SQL<unknown> | Placeholder<string, any>; username: string | SQL<unknown> | Placeholder<string, any>; }'.
+      Type '{}' is missing the following properties from type '{ isAvailable: boolean | SQL<unknown> | Placeholder<string, any>; username: string | SQL<unknown> | Placeholder<string, any>; }': isAvailable, username
+  Overload 2 of 2, '(values: { isAvailable: boolean | SQL<unknown> | Placeholder<string, any>; username: string | SQL<unknown> | Placeholder<string, any>; }[]): PgInsertBase<PgTableWithColumns<{ name: "username_checks"; schema: undefined; columns: { ...; }; dialect: "pg"; }>, ... 4 more ..., never>', gave the following error.
+    Argument of type '{}' is not assignable to parameter of type '{ isAvailable: boolean | SQL<unknown> | Placeholder<string, any>; username: string | SQL<unknown> | Placeholder<string, any>; }[]'.
+      Type '{}' is missing the following properties from type '{ isAvailable: boolean | SQL<unknown> | Placeholder<string, any>; username: string | SQL<unknown> | Placeholder<string, any>; }[]': length, pop, push, concat, and 35 more.
+Build Completed in /vercel/output [23s]
