@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ListChecks, Play, Download, Loader2, Upload, FileText } from "lucide-react";
+import { ListChecks, Play, Download, Loader2, Upload, FileText, CheckCircle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -409,30 +409,36 @@ export default function BulkChecker() {
 
         {/* Enhanced Summary */}
         {summary && (
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/50 rounded-xl p-5 mt-6 shadow-sm">
-            <div className="flex items-center justify-between mb-4">
-              <h4 className="text-lg font-semibold text-gray-800">Processing Summary</h4>
-              <div className="flex items-center space-x-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                <span className="text-sm text-blue-700 font-medium">Complete</span>
+          <div className="bg-gradient-to-br from-emerald-50 via-blue-50 to-purple-50 dark:from-emerald-900/20 dark:via-blue-900/20 dark:to-purple-900/20 border border-emerald-200/50 dark:border-emerald-700/50 rounded-xl p-6 mt-6 shadow-lg backdrop-blur-sm">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-green-600 rounded-lg flex items-center justify-center shadow-lg">
+                  <CheckCircle className="text-white" size={18} />
+                </div>
+                <h4 className="text-xl font-bold text-gray-900 dark:text-white">Processing Summary</h4>
+              </div>
+              <div className="flex items-center space-x-3 bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-full">
+                <div className="w-3 h-3 bg-emerald-500 rounded-full shadow-sm"></div>
+                <span className="text-sm font-bold text-emerald-700 dark:text-emerald-300">Complete</span>
               </div>
             </div>
+            
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-3 bg-white/60 rounded-lg">
-                <div className="text-2xl font-bold text-gray-800">{summary.total}</div>
-                <div className="text-xs text-gray-600">Total</div>
+              <div className="text-center p-4 bg-white/80 dark:bg-gray-800/80 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border border-gray-100 dark:border-gray-700">
+                <div className="text-3xl font-bold text-gray-900 dark:text-white mb-1">{summary.total.toLocaleString()}</div>
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400">Total</div>
               </div>
-              <div className="text-center p-3 bg-white/60 rounded-lg">
-                <div className="text-2xl font-bold text-blue-600">{summary.processed}</div>
-                <div className="text-xs text-gray-600">Processed</div>
+              <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border border-blue-100 dark:border-blue-800">
+                <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-1">{summary.processed.toLocaleString()}</div>
+                <div className="text-sm font-medium text-blue-700 dark:text-blue-300">Processed</div>
               </div>
-              <div className="text-center p-3 bg-white/60 rounded-lg">
-                <div className="text-2xl font-bold text-green-600">{summary.available}</div>
-                <div className="text-xs text-gray-600">Available</div>
+              <div className="text-center p-4 bg-gradient-to-br from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border border-emerald-100 dark:border-emerald-800">
+                <div className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-1">{summary.available.toLocaleString()}</div>
+                <div className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Available</div>
               </div>
-              <div className="text-center p-3 bg-white/60 rounded-lg">
-                <div className="text-2xl font-bold text-red-600">{summary.taken}</div>
-                <div className="text-xs text-gray-600">Taken</div>
+              <div className="text-center p-4 bg-gradient-to-br from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 border border-red-100 dark:border-red-800">
+                <div className="text-3xl font-bold text-red-600 dark:text-red-400 mb-1">{summary.taken.toLocaleString()}</div>
+                <div className="text-sm font-medium text-red-700 dark:text-red-300">Taken</div>
               </div>
             </div>
             {summary.errors > 0 && (
@@ -509,33 +515,39 @@ export default function BulkChecker() {
         )}
 
         {results.length > 0 && (
-          <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200/50 rounded-xl">
-            <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-              <Download className="w-4 h-4 text-green-600" />
-              Download Results
-            </h4>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="mt-6 p-5 bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-indigo-900/20 dark:via-purple-900/20 dark:to-pink-900/20 border border-indigo-200/50 dark:border-indigo-700/50 rounded-xl shadow-lg backdrop-blur-sm">
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+                <Download className="text-white" size={18} />
+              </div>
+              <h4 className="text-lg font-bold text-gray-900 dark:text-white">Download Results</h4>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Button 
                 onClick={exportResults}
                 variant="outline"
-                className="flex-1 border-gray-300 hover:bg-gray-50 transition-all duration-200"
+                className="h-12 border-2 border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-300 font-medium"
               >
-                <FileText className="mr-2 h-4 w-4" />
+                <FileText className="mr-2 h-5 w-5" />
                 Export All (CSV)
               </Button>
               {results.some(r => r.isAvailable === true) && (
                 <Button 
                   onClick={downloadAvailableUsernames}
-                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                  className="h-12 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium"
                 >
-                  <Download className="mr-2 h-4 w-4" />
+                  <Download className="mr-2 h-5 w-5" />
                   Available Only (.txt)
                 </Button>
               )}
             </div>
-            <p className="text-xs text-gray-600 mt-2 text-center">
-              CSV includes all data • TXT contains only available usernames
-            </p>
+            
+            <div className="mt-4 p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-gray-200/50 dark:border-gray-700/50">
+              <p className="text-sm text-gray-700 dark:text-gray-300 text-center font-medium">
+                📊 CSV includes all data with status details • 📝 TXT contains only available usernames
+              </p>
+            </div>
           </div>
         )}
       </CardContent>
