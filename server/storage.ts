@@ -13,6 +13,7 @@ export interface IStorage {
     takenCount: number;
     avgResponseTime: number;
   }>;
+  clearUsernameChecks(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -80,6 +81,11 @@ export class MemStorage implements IStorage {
       takenCount,
       avgResponseTime: 0.8, // Mock average response time
     };
+  }
+
+  async clearUsernameChecks(): Promise<void> {
+    this.usernameChecks.clear();
+    this.currentCheckId = 1;
   }
 }
 

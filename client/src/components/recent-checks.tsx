@@ -1,8 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { History, Check, X } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from "date-fns";
+import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 
 interface UsernameCheck {
   id: number;
@@ -12,9 +14,47 @@ interface UsernameCheck {
 }
 
 export default function RecentChecks() {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  
   const { data: recentChecks = [], isLoading } = useQuery<UsernameCheck[]>({
     queryKey: ['/api/username/recent'],
-    refetchInterval: 10000, // Refetch every 10 seconds
+    refetchInterval: 3000, // Real-time updates every 3 seconds
+  });
+
+  const clearHistoryMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/username/recent', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to clear history');
+      }
+      
+      return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate and refetch recent checks and stats
+      queryClient.invalidateQueries({ queryKey: ['/api/username/recent'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/username/stats'] });
+      
+      toast({
+        title: "History cleared",
+        description: "All username check history has been cleared successfully.",
+      });
+    },
+    onError: (error) => {
+      console.error('Clear history error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear history. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   if (isLoading) {
@@ -97,10 +137,8 @@ export default function RecentChecks() {
                 variant="ghost" 
                 size="sm"
                 className="mt-4 text-sm text-roblox-blue hover:text-blue-700 font-medium"
-                onClick={() => {
-                  // Could implement clear history functionality
-                  console.log('Clear history clicked');
-                }}
+                onClick={() => clearHistoryMutation.mutate()}
+                disabled={clearHistoryMutation.isPending}
               >
                 Clear History
               </Button>

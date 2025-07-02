@@ -12,7 +12,7 @@ interface UsageStats {
 export default function UsageStats() {
   const { data: stats, isLoading } = useQuery<UsageStats>({
     queryKey: ['/api/username/stats'],
-    refetchInterval: 30000, // Refetch every 30 seconds
+    refetchInterval: 3000, // Real-time updates every 3 seconds
   });
 
   const statItems = [

@@ -395,6 +395,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Clear history endpoint
+  app.delete("/api/username/recent", async (req, res) => {
+    try {
+      // Clear all username checks from storage
+      await storage.clearUsernameChecks();
+      
+      res.json({ 
+        message: "History cleared successfully" 
+      });
+    } catch (error) {
+      console.error('Clear history error:', error);
+      res.status(500).json({ 
+        message: "Failed to clear history" 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
