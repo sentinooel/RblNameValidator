@@ -19,7 +19,7 @@ export default function RecentChecks() {
   
   const { data: recentChecks = [], isLoading } = useQuery<UsernameCheck[]>({
     queryKey: ['/api/username/recent'],
-    refetchInterval: 3000, // Real-time updates every 3 seconds
+    refetchInterval: 30000, // Check every 30 seconds instead of 3
   });
 
   const clearHistoryMutation = useMutation({
