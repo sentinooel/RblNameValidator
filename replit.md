@@ -186,6 +186,13 @@ The application is configured for deployment on Replit with the following setup:
     - Created type definition overrides for Vite configuration compatibility
     - Updated TypeScript configuration with relaxed build settings
   - Migration completed successfully with full functionality preserved
+- July 02, 2025. Created command-line interface as alternative to web frontend:
+  - Built standalone CLI tool (cli-checker.cjs) using Node.js and native fetch
+  - Supports single username checking and bulk file processing
+  - Features color-coded output, automatic CSV export, and rate limiting
+  - Bypasses frontend issues by connecting directly to Roblox API
+  - Handles censored usernames, validation errors, and network issues
+  - Provides immediate results with detailed status information
 
 ## User Preferences
 
