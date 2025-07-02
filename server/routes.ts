@@ -43,45 +43,51 @@ function checkRateLimit(ip: string): boolean {
 }
 
 async function checkRobloxUsername(username: string): Promise<boolean> {
-  try {
-    // Use Roblox auth validation endpoint for more accurate results
-    const response = await fetch(`https://auth.roblox.com/v1/usernames/validate?username=${encodeURIComponent(username)}&birthday=2001-09-11`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    if (!response.ok) {
-      throw new Error(`Roblox API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    
-    // The auth API returns validation info
-    // code: 0 means username is available
-    // Any other code means username is not available (taken, censored, invalid, etc.)
-    return data.code === 0;
-  } catch (error) {
-    console.error('Error checking Roblox username:', error);
-    throw new Error('Failed to check username availability');
-  }
+  const details = await getRobloxUsernameDetails(username);
+  return details.isAvailable;
 }
 
 async function getRobloxUsernameDetails(username: string): Promise<{ isAvailable: boolean; status: string; message?: string }> {
   try {
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
     const response = await fetch(`https://auth.roblox.com/v1/usernames/validate?username=${encodeURIComponent(username)}&birthday=2001-09-11`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-      }
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      signal: controller.signal
     });
+    
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
-      throw new Error(`Roblox API error: ${response.status}`);
+      // If Roblox API is down or blocking, fall back to simple availability check
+      console.warn(`Roblox API returned ${response.status}, falling back to basic check`);
+      return await fallbackUsernameCheck(username);
     }
 
-    const data = await response.json();
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn('Roblox API returned non-JSON response, falling back to basic check');
+      return await fallbackUsernameCheck(username);
+    }
+
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      console.warn('Failed to parse JSON from Roblox API, falling back to basic check');
+      return await fallbackUsernameCheck(username);
+    }
+    
+    if (typeof data.code === 'undefined') {
+      console.warn('Unexpected API response format, falling back to basic check');
+      return await fallbackUsernameCheck(username);
+    }
     
     switch (data.code) {
       case 0:
@@ -101,7 +107,52 @@ async function getRobloxUsernameDetails(username: string): Promise<{ isAvailable
     }
   } catch (error) {
     console.error('Error checking Roblox username details:', error);
-    throw new Error('Failed to check username availability');
+    return await fallbackUsernameCheck(username);
+  }
+}
+
+// Fallback method using the users API when auth API fails
+async function fallbackUsernameCheck(username: string): Promise<{ isAvailable: boolean; status: string; message?: string }> {
+  try {
+    // Create abort controller for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch('https://users.roblox.com/v1/usernames/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      },
+      body: JSON.stringify({
+        usernames: [username],
+        excludeBannedUsers: true
+      }),
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+
+    if (!response.ok) {
+      throw new Error(`Fallback API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    const isAvailable = !data.data || data.data.length === 0;
+    
+    return { 
+      isAvailable, 
+      status: isAvailable ? 'available' : 'taken',
+      message: isAvailable ? undefined : 'Username is already taken'
+    };
+  } catch (error) {
+    console.error('Fallback username check failed:', error);
+    // Return a safe default when all methods fail
+    return { 
+      isAvailable: false, 
+      status: 'error', 
+      message: 'Could not verify username availability at this time'
+    };
   }
 }
 
