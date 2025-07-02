@@ -60,8 +60,13 @@ export default function BulkChecker() {
 
   const bulkCheckMutation = useMutation({
     mutationFn: async (data: { usernames: string[] }) => {
-      const response = await apiRequest("POST", "/api/username/bulk-check", data);
-      return response.json();
+      try {
+        const response = await apiRequest("POST", "/api/username/bulk-check", data);
+        return response.json();
+      } catch (error) {
+        console.error('Bulk check API error:', error);
+        throw error;
+      }
     },
     onSuccess: (data: BulkResponse) => {
       setResults(data.results);
@@ -80,6 +85,7 @@ export default function BulkChecker() {
       });
     },
     onError: (error: any) => {
+      console.error('Bulk check mutation error:', error);
       setProgress(0);
       setSummary(null);
       toast({
@@ -101,8 +107,15 @@ export default function BulkChecker() {
       });
       
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Failed to process file');
+        let errorMessage = 'Failed to process file';
+        try {
+          const error = await response.json();
+          errorMessage = error.message || errorMessage;
+        } catch (e) {
+          // If response is not JSON, use the status text
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
       
       return response.json();
