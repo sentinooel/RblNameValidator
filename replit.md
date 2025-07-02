@@ -1,0 +1,108 @@
+# Roblox Username Checker
+
+## Overview
+
+This is a full-stack web application that allows users to check the availability of Roblox usernames. The application provides both single username checking and bulk checking capabilities, along with statistics tracking and recent check history. It's built with a modern tech stack using React on the frontend and Express on the backend.
+
+## System Architecture
+
+The application follows a monorepo structure with clear separation between client, server, and shared code:
+
+- **Frontend**: React with TypeScript, using Vite as the build tool
+- **Backend**: Express.js server with TypeScript
+- **Database**: PostgreSQL with Drizzle ORM
+- **Styling**: Tailwind CSS with shadcn/ui components
+- **State Management**: TanStack Query for server state management
+- **Routing**: Wouter for client-side routing
+
+## Key Components
+
+### Frontend Architecture
+- **Component Library**: Built on shadcn/ui with Radix UI primitives
+- **Form Handling**: React Hook Form with Zod validation
+- **State Management**: TanStack Query for API state, React hooks for local state
+- **Styling**: Tailwind CSS with custom CSS variables for theming
+- **Build Tool**: Vite with custom configuration for development and production
+
+### Backend Architecture
+- **Framework**: Express.js with TypeScript
+- **Database ORM**: Drizzle with PostgreSQL dialect
+- **API Design**: RESTful endpoints with proper error handling
+- **Rate Limiting**: In-memory rate limiting (10 requests per minute per IP)
+- **External Integration**: Roblox API for username availability checking
+
+### Database Schema
+- **username_checks table**: Stores username check history with fields:
+  - `id`: Primary key (serial)
+  - `username`: The checked username (text)
+  - `is_available`: Availability status (boolean)
+  - `checked_at`: Timestamp of the check
+
+### API Endpoints
+- `POST /api/username/check`: Single username availability check
+- `POST /api/username/bulk-check`: Bulk username checking (up to 10 usernames)
+- `GET /api/username/recent`: Retrieve recent username checks
+- `GET /api/username/stats`: Get usage statistics
+- `GET /api/status`: API health check
+
+## Data Flow
+
+1. **Username Validation**: Client-side validation using Zod schemas before API calls
+2. **API Request**: Form submissions trigger API calls through TanStack Query
+3. **Rate Limiting**: Server checks rate limits before processing requests
+4. **Roblox API Integration**: Server makes requests to Roblox's user API to check availability
+5. **Database Storage**: All checks are stored in PostgreSQL for history and statistics
+6. **Response Handling**: Results are returned to client and cached by TanStack Query
+7. **UI Updates**: Components reactively update based on query results
+
+## External Dependencies
+
+### Frontend Dependencies
+- **React Ecosystem**: React 18 with hooks, React Router (Wouter)
+- **UI Components**: Radix UI primitives, shadcn/ui components
+- **Form Management**: React Hook Form with Zod resolvers
+- **HTTP Client**: Fetch API with TanStack Query wrapper
+- **Styling**: Tailwind CSS, class-variance-authority for component variants
+- **Icons**: Lucide React icons
+- **Date Handling**: date-fns for date formatting
+
+### Backend Dependencies
+- **Database**: Neon serverless PostgreSQL, Drizzle ORM
+- **Validation**: Zod for schema validation
+- **Development**: tsx for TypeScript execution, esbuild for production builds
+
+### External APIs
+- **Roblox Users API**: `https://users.roblox.com/v1/usernames/users` for username availability checking
+
+## Deployment Strategy
+
+The application is configured for deployment on Replit with the following setup:
+
+### Development
+- `npm run dev`: Starts the development server with hot reloading
+- Vite dev server serves the frontend with HMR
+- Express server runs with tsx for TypeScript execution
+- Database migrations can be pushed with `npm run db:push`
+
+### Production Build
+- `npm run build`: Builds both frontend and backend
+- Frontend: Vite builds static assets to `dist/public`
+- Backend: esbuild bundles server code to `dist/index.js`
+- `npm start`: Runs the production server
+
+### Database Management
+- Drizzle Kit handles schema migrations
+- Configuration supports both development and production PostgreSQL connections
+- Schema definitions are shared between client and server via the `shared` directory
+
+### Environment Configuration
+- `DATABASE_URL`: PostgreSQL connection string (required)
+- `NODE_ENV`: Environment detection for development/production modes
+- Replit-specific plugins are conditionally loaded for development
+
+## Changelog
+- July 02, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
