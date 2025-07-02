@@ -269,19 +269,19 @@ export default function BulkChecker() {
         </div>
         
         <Tabs defaultValue="manual" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
+          <TabsList className="grid w-full grid-cols-2 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800 p-1 rounded-xl shadow-inner border border-gray-200 dark:border-gray-600">
             <TabsTrigger 
               value="manual" 
-              className="flex items-center gap-2 px-4 py-2 rounded-md transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-purple-500 data-[state=active]:to-pink-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:transform data-[state=active]:scale-[1.02] font-medium"
             >
-              <FileText size={16} />
+              <FileText size={18} />
               Manual Input
             </TabsTrigger>
             <TabsTrigger 
               value="file" 
-              className="flex items-center gap-2 px-4 py-2 rounded-md transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm"
+              className="flex items-center gap-3 px-6 py-3 rounded-lg transition-all duration-300 data-[state=active]:bg-gradient-to-r data-[state=active]:from-indigo-500 data-[state=active]:to-purple-600 data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:transform data-[state=active]:scale-[1.02] font-medium"
             >
-              <Upload size={16} />
+              <Upload size={18} />
               File Upload
             </TabsTrigger>
           </TabsList>
@@ -294,21 +294,30 @@ export default function BulkChecker() {
                   name="usernames"
                   render={({ field }) => (
                     <FormItem>
-                      <Label htmlFor="bulk-usernames" className="text-sm font-medium text-gray-700">
+                      <Label htmlFor="bulk-usernames" className="text-sm font-bold text-gray-800 dark:text-white mb-2 block">
                         Multiple Usernames
                       </Label>
                       <FormControl>
-                        <Textarea
-                          {...field}
-                          id="bulk-usernames"
-                          rows={8}
-                          placeholder="Enter usernames (one per line)&#10;Example:&#10;Username1&#10;CoolPlayer&#10;GamerTag123&#10;&#10;No limit on number of usernames!"
-                          className="resize-none"
-                        />
+                        <div className="relative">
+                          <Textarea
+                            {...field}
+                            id="bulk-usernames"
+                            rows={8}
+                            placeholder="Enter usernames (one per line)&#10;Example:&#10;Username1&#10;CoolPlayer&#10;GamerTag123&#10;&#10;No limit on number of usernames!"
+                            className="resize-none border-2 border-purple-200 dark:border-purple-600 bg-gradient-to-br from-purple-50/50 to-pink-50/50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-4 focus:border-purple-400 dark:focus:border-purple-500 transition-all duration-300 backdrop-blur-sm shadow-inner"
+                          />
+                          <div className="absolute top-3 right-3">
+                            <div className="w-6 h-6 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex items-center justify-center">
+                              <FileText className="text-white" size={12} />
+                            </div>
+                          </div>
+                        </div>
                       </FormControl>
-                      <p className="text-xs text-gray-500">
-                        No limit - enter as many usernames as you want (one per line)
-                      </p>
+                      <div className="p-3 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          ♾️ No limit - enter as many usernames as you want (one per line)
+                        </p>
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -316,17 +325,17 @@ export default function BulkChecker() {
 
                 <Button 
                   type="submit"
-                  className="w-full bg-roblox-blue text-white hover:bg-roblox-blue/90"
+                  className="w-full h-12 bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-300"
                   disabled={bulkCheckMutation.isPending}
                 >
                   {bulkCheckMutation.isPending ? (
                     <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                       Checking...
                     </>
                   ) : (
                     <>
-                      <Play className="mr-2 h-4 w-4" />
+                      <Play className="mr-2 h-5 w-5" />
                       Check All Usernames
                     </>
                   )}
@@ -337,8 +346,8 @@ export default function BulkChecker() {
           
           <TabsContent value="file" className="space-y-4">
             <div>
-              <Label className="text-sm font-medium text-gray-700">Upload .txt File</Label>
-              <div className="mt-2 border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+              <Label className="text-sm font-bold text-gray-800 dark:text-white mb-3 block">Upload .txt File</Label>
+              <div className="mt-2 border-2 border-dashed border-indigo-300 dark:border-indigo-600 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-8 text-center hover:border-indigo-400 dark:hover:border-indigo-500 transition-all duration-300 backdrop-blur-sm">
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -348,36 +357,41 @@ export default function BulkChecker() {
                 />
                 
                 {uploadedFile ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-center space-x-2">
-                      <FileText className="text-roblox-blue" size={24} />
-                      <span className="text-sm font-medium text-gray-900">{uploadedFile.name}</span>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-center space-x-3">
+                      <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-lg flex items-center justify-center shadow-lg">
+                        <FileText className="text-white" size={20} />
+                      </div>
+                      <div className="text-left">
+                        <div className="text-lg font-bold text-gray-900 dark:text-white">{uploadedFile.name}</div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          {(uploadedFile.size / 1024).toFixed(1)} KB
+                        </div>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500">
-                      {(uploadedFile.size / 1024).toFixed(1)} KB
-                    </p>
-                    <div className="flex space-x-2">
+                    
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <Button
                         onClick={() => fileInputRef.current?.click()}
                         variant="outline"
-                        size="sm"
+                        className="h-11 px-6 border-2 border-gray-300 dark:border-gray-600 hover:border-indigo-400 dark:hover:border-indigo-500 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition-all duration-300 font-medium"
                       >
+                        <FileText className="mr-2 h-4 w-4" />
                         Choose Different File
                       </Button>
                       <Button
                         onClick={handleFileUpload}
                         disabled={fileUploadMutation.isPending}
-                        size="sm"
-                        className="bg-roblox-blue text-white hover:bg-roblox-blue/90"
+                        className="h-11 px-6 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-medium"
                       >
                         {fileUploadMutation.isPending ? (
                           <>
-                            <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                             Processing...
                           </>
                         ) : (
                           <>
-                            <Upload className="mr-1 h-3 w-3" />
+                            <Upload className="mr-2 h-4 w-4" />
                             Process File
                           </>
                         )}
@@ -385,21 +399,26 @@ export default function BulkChecker() {
                     </div>
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <Upload className="mx-auto h-8 w-8 text-gray-400" />
-                    <div>
+                  <div className="space-y-6">
+                    <div className="w-16 h-16 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto shadow-lg">
+                      <Upload className="h-8 w-8 text-white" />
+                    </div>
+                    <div className="space-y-3">
                       <Button
                         onClick={() => fileInputRef.current?.click()}
-                        variant="outline"
+                        className="h-12 px-8 bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300 font-bold text-base"
                       >
+                        <FileText className="mr-2 h-5 w-5" />
                         Select .txt File
                       </Button>
+                      <div className="p-4 bg-white/60 dark:bg-gray-800/60 rounded-lg border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm">
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          📄 Upload a .txt file with usernames (one per line)
+                          <br />
+                          📏 Maximum file size: 5MB
+                        </p>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-500">
-                      Upload a .txt file with usernames (one per line)
-                      <br />
-                      Maximum file size: 5MB
-                    </p>
                   </div>
                 )}
               </div>
