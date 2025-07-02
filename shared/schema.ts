@@ -27,5 +27,5 @@ export const usernameValidationSchema = z.object({
 });
 
 export const bulkUsernameSchema = z.object({
-  usernames: z.array(z.string()).max(10, "Maximum 10 usernames allowed"),
+  usernames: z.array(z.string()).min(1, "At least one username required"),
 });

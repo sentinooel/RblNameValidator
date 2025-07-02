@@ -40,7 +40,8 @@ The application follows a monorepo structure with clear separation between clien
 
 ### API Endpoints
 - `POST /api/username/check`: Single username availability check
-- `POST /api/username/bulk-check`: Bulk username checking (up to 10 usernames)
+- `POST /api/username/bulk-check`: Bulk username checking (unlimited usernames)
+- `POST /api/username/bulk-check-file`: File upload bulk checking (.txt files, up to 5MB)
 - `GET /api/username/recent`: Retrieve recent username checks
 - `GET /api/username/stats`: Get usage statistics
 - `GET /api/status`: API health check
@@ -102,6 +103,13 @@ The application is configured for deployment on Replit with the following setup:
 
 ## Changelog
 - July 02, 2025. Initial setup
+- July 02, 2025. Added unlimited bulk checking and file upload features:
+  - Removed 10 username limit from bulk checking
+  - Added file upload support for .txt files (up to 5MB, max 10,000 usernames)
+  - Enhanced bulk checker UI with tabs for manual input vs file upload
+  - Added processing summary with detailed statistics
+  - Improved CSV export with error details
+  - Updated API endpoints with multer for file handling
 
 ## User Preferences
 

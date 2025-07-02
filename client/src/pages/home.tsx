@@ -61,18 +61,21 @@ export default function Home() {
           <div className="lg:col-span-1 space-y-6">
             <BulkChecker />
             
-            {/* Rate Limit Info */}
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+            {/* Features Info */}
+            <div className="bg-green-50 border border-green-200 rounded-xl p-4">
               <div className="flex items-start space-x-3">
-                <Shield className="text-warning mt-0.5" size={18} />
+                <Shield className="text-green-600 mt-0.5" size={18} />
                 <div>
-                  <h4 className="text-sm font-semibold text-amber-800">Rate Limiting</h4>
-                  <p className="text-xs text-amber-700 mt-1">
-                    To respect Roblox's API limits, bulk checks are processed with delays. 
-                    Please be patient during large batch operations.
+                  <h4 className="text-sm font-semibold text-green-800">New Features</h4>
+                  <p className="text-xs text-green-700 mt-1">
+                    ✓ Unlimited bulk checking - no 10 username limit!
+                    <br />
+                    ✓ File upload support - upload .txt files with usernames
+                    <br />
+                    ✓ Enhanced CSV export with detailed results
                   </p>
-                  <div className="mt-2 text-xs text-amber-600">
-                    <span className="font-medium">Current limit:</span> 10 requests per minute
+                  <div className="mt-2 text-xs text-green-600">
+                    <span className="font-medium">Processing:</span> Automatic delays respect Roblox API limits
                   </div>
                 </div>
               </div>

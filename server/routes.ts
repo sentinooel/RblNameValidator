@@ -1,8 +1,24 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
+import multer from "multer";
 import { storage } from "./storage";
 import { usernameValidationSchema, bulkUsernameSchema } from "@shared/schema";
 import { z } from "zod";
+
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'text/plain' || file.originalname.endsWith('.txt')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only .txt files are allowed'));
+    }
+  },
+});
 
 // Rate limiting store
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
@@ -112,13 +128,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { usernames } = bulkUsernameSchema.parse(req.body);
       
       // Validate each username
-      const validatedUsernames = usernames.map(username => 
-        usernameValidationSchema.parse({ username }).username
-      );
+      const validatedUsernames = [];
+      const validationErrors = [];
+      
+      for (const username of usernames) {
+        try {
+          const validated = usernameValidationSchema.parse({ username }).username;
+          validatedUsernames.push(validated);
+        } catch (error) {
+          validationErrors.push({
+            username,
+            error: "Invalid username format",
+          });
+        }
+      }
       
       const results = [];
+      let processed = 0;
       
-      // Process usernames with delay to respect rate limits
+      // Add validation errors to results
+      results.push(...validationErrors.map(err => ({
+        username: err.username,
+        isAvailable: null,
+        error: err.error,
+        timestamp: new Date(),
+      })));
+      
+      // Process valid usernames with delay to respect rate limits
       for (const username of validatedUsernames) {
         try {
           const isAvailable = await checkRobloxUsername(username);
@@ -134,8 +170,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             timestamp: check.checkedAt,
           });
           
+          processed++;
+          
+          // Send progress update for large batches
+          if (validatedUsernames.length > 10 && processed % 10 === 0) {
+            // In a real implementation, you might use WebSockets for real-time progress
+            console.log(`Processed ${processed}/${validatedUsernames.length} usernames`);
+          }
+          
           // Add delay between requests to avoid hitting Roblox rate limits
-          if (validatedUsernames.indexOf(username) < validatedUsernames.length - 1) {
+          if (processed < validatedUsernames.length) {
             await new Promise(resolve => setTimeout(resolve, 1000));
           }
         } catch (error) {
@@ -145,10 +189,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
             error: error instanceof Error ? error.message : "Failed to check username",
             timestamp: new Date(),
           });
+          processed++;
         }
       }
       
-      res.json({ results });
+      res.json({ 
+        results,
+        summary: {
+          total: usernames.length,
+          processed: validatedUsernames.length,
+          errors: validationErrors.length,
+          available: results.filter(r => r.isAvailable === true).length,
+          taken: results.filter(r => r.isAvailable === false).length,
+        }
+      });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ 
@@ -160,6 +214,116 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Bulk check error:', error);
       res.status(500).json({ 
         message: "Failed to process bulk check" 
+      });
+    }
+  });
+
+  // File upload for bulk username check
+  app.post("/api/username/bulk-check-file", upload.single('file'), async (req, res) => {
+    try {
+      const clientIp = req.ip || req.connection.remoteAddress || 'unknown';
+      
+      if (!checkRateLimit(clientIp)) {
+        return res.status(429).json({ 
+          message: "Rate limit exceeded. Please wait before making more requests." 
+        });
+      }
+
+      if (!req.file) {
+        return res.status(400).json({ 
+          message: "No file uploaded" 
+        });
+      }
+
+      // Parse the uploaded file
+      const fileContent = req.file.buffer.toString('utf-8');
+      const usernames = fileContent
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .slice(0, 10000); // Limit to 10,000 usernames for safety
+
+      if (usernames.length === 0) {
+        return res.status(400).json({ 
+          message: "No valid usernames found in file" 
+        });
+      }
+
+      // Process the usernames using the same logic as bulk-check
+      const validatedUsernames = [];
+      const validationErrors = [];
+      
+      for (const username of usernames) {
+        try {
+          const validated = usernameValidationSchema.parse({ username }).username;
+          validatedUsernames.push(validated);
+        } catch (error) {
+          validationErrors.push({
+            username,
+            error: "Invalid username format",
+          });
+        }
+      }
+      
+      const results = [];
+      let processed = 0;
+      
+      // Add validation errors to results
+      results.push(...validationErrors.map(err => ({
+        username: err.username,
+        isAvailable: null,
+        error: err.error,
+        timestamp: new Date(),
+      })));
+      
+      // Process valid usernames with delay to respect rate limits
+      for (const username of validatedUsernames) {
+        try {
+          const isAvailable = await checkRobloxUsername(username);
+          
+          const check = await storage.saveUsernameCheck({
+            username,
+            isAvailable,
+          });
+          
+          results.push({
+            username,
+            isAvailable,
+            timestamp: check.checkedAt,
+          });
+          
+          processed++;
+          
+          // Add delay between requests to avoid hitting Roblox rate limits
+          if (processed < validatedUsernames.length) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+          }
+        } catch (error) {
+          results.push({
+            username,
+            isAvailable: null,
+            error: error instanceof Error ? error.message : "Failed to check username",
+            timestamp: new Date(),
+          });
+          processed++;
+        }
+      }
+      
+      res.json({ 
+        results,
+        summary: {
+          total: usernames.length,
+          processed: validatedUsernames.length,
+          errors: validationErrors.length,
+          available: results.filter(r => r.isAvailable === true).length,
+          taken: results.filter(r => r.isAvailable === false).length,
+        },
+        filename: req.file.originalname,
+      });
+    } catch (error) {
+      console.error('File upload error:', error);
+      res.status(500).json({ 
+        message: error instanceof Error ? error.message : "Failed to process file" 
       });
     }
   });
