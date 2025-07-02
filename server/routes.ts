@@ -44,16 +44,12 @@ function checkRateLimit(ip: string): boolean {
 
 async function checkRobloxUsername(username: string): Promise<boolean> {
   try {
-    // Check if username exists by trying to get user info
-    const response = await fetch(`https://users.roblox.com/v1/usernames/users`, {
-      method: 'POST',
+    // Use Roblox auth validation endpoint for more accurate results
+    const response = await fetch(`https://auth.roblox.com/v1/usernames/validate?username=${encodeURIComponent(username)}&birthday=2001-09-11`, {
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        usernames: [username],
-        excludeBannedUsers: false
-      })
+      }
     });
 
     if (!response.ok) {
@@ -62,9 +58,11 @@ async function checkRobloxUsername(username: string): Promise<boolean> {
 
     const data = await response.json();
     
-    // If the API returns data for this username, it's taken
-    // If it returns empty data, it's available
-    return !data.data || data.data.length === 0;
+    // The auth API returns validation info
+    // code: 0 means username is available
+    // code: 1 means username is taken
+    // code: 2 means username is invalid/filtered
+    return data.code === 0;
   } catch (error) {
     console.error('Error checking Roblox username:', error);
     throw new Error('Failed to check username availability');

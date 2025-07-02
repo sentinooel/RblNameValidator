@@ -125,6 +125,12 @@ The application is configured for deployment on Replit with the following setup:
   - Added comprehensive summary statistics with visual cards
   - Enhanced download section with gradient buttons and better organization
   - Implemented clean, professional color scheme throughout application
+- July 02, 2025. API endpoint upgrade:
+  - Updated to use Roblox auth validation API for more accurate results
+  - Changed from POST to users endpoint to GET validation endpoint
+  - New endpoint: https://auth.roblox.com/v1/usernames/validate
+  - Provides more reliable username availability checking
+  - Better error handling with specific response codes
 
 ## User Preferences
 
