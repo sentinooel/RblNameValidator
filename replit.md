@@ -131,6 +131,13 @@ The application is configured for deployment on Replit with the following setup:
   - New endpoint: https://auth.roblox.com/v1/usernames/validate
   - Provides more reliable username availability checking
   - Better error handling with specific response codes
+- July 02, 2025. Enhanced censored username detection:
+  - Added detailed status information for all username checks
+  - Now detects and displays censored/inappropriate usernames
+  - Shows specific validation messages from Roblox API
+  - Enhanced UI with color-coded status badges (Available/Taken/Censored/Invalid)
+  - Improved toast notifications with detailed status descriptions
+  - Supports detection of various validation errors (too short, too long, invalid characters)
 
 ## User Preferences
 

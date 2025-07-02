@@ -24,6 +24,8 @@ type FormData = z.infer<typeof bulkFormSchema>;
 interface BulkResult {
   username: string;
   isAvailable: boolean | null;
+  status?: string;
+  message?: string;
   error?: string;
   timestamp: string;
 }
@@ -481,13 +483,23 @@ export default function BulkChecker() {
                       ? 'bg-yellow-100 text-warning'
                       : result.isAvailable 
                         ? 'bg-green-100 text-success'
-                        : 'bg-red-100 text-error'
+                        : result.status === 'censored'
+                          ? 'bg-orange-100 text-orange-700'
+                          : 'bg-red-100 text-error'
                   }`}>
                     {result.isAvailable === null 
                       ? 'Error'
                       : result.isAvailable 
                         ? 'Available'
-                        : 'Taken'
+                        : result.status === 'censored'
+                          ? 'Censored'
+                          : result.status === 'too_short'
+                            ? 'Too Short'
+                            : result.status === 'too_long'
+                              ? 'Too Long'
+                              : result.status === 'invalid_characters'
+                                ? 'Invalid'
+                                : 'Taken'
                     }
                   </span>
                 </div>

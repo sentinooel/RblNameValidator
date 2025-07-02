@@ -60,11 +60,47 @@ async function checkRobloxUsername(username: string): Promise<boolean> {
     
     // The auth API returns validation info
     // code: 0 means username is available
-    // code: 1 means username is taken
-    // code: 2 means username is invalid/filtered
+    // Any other code means username is not available (taken, censored, invalid, etc.)
     return data.code === 0;
   } catch (error) {
     console.error('Error checking Roblox username:', error);
+    throw new Error('Failed to check username availability');
+  }
+}
+
+async function getRobloxUsernameDetails(username: string): Promise<{ isAvailable: boolean; status: string; message?: string }> {
+  try {
+    const response = await fetch(`https://auth.roblox.com/v1/usernames/validate?username=${encodeURIComponent(username)}&birthday=2001-09-11`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Roblox API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    
+    switch (data.code) {
+      case 0:
+        return { isAvailable: true, status: 'available' };
+      case 1:
+        return { isAvailable: false, status: 'taken', message: data.message };
+      case 2:
+        return { isAvailable: false, status: 'censored', message: data.message || 'Username contains inappropriate content' };
+      case 10:
+        return { isAvailable: false, status: 'too_short', message: data.message || 'Username is too short' };
+      case 11:
+        return { isAvailable: false, status: 'too_long', message: data.message || 'Username is too long' };
+      case 12:
+        return { isAvailable: false, status: 'invalid_characters', message: data.message || 'Username contains invalid characters' };
+      default:
+        return { isAvailable: false, status: 'unknown', message: data.message || 'Unknown validation error' };
+    }
+  } catch (error) {
+    console.error('Error checking Roblox username details:', error);
     throw new Error('Failed to check username availability');
   }
 }
@@ -84,17 +120,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const { username } = usernameValidationSchema.parse(req.body);
       
-      const isAvailable = await checkRobloxUsername(username);
+      const result = await getRobloxUsernameDetails(username);
       
       // Save the check to storage
       const check = await storage.saveUsernameCheck({
         username,
-        isAvailable,
+        isAvailable: result.isAvailable,
       });
       
       res.json({
         username,
-        isAvailable,
+        isAvailable: result.isAvailable,
+        status: result.status,
+        message: result.message,
         timestamp: check.checkedAt,
       });
     } catch (error) {

@@ -18,6 +18,8 @@ type FormData = z.infer<typeof usernameValidationSchema>;
 interface CheckResult {
   username: string;
   isAvailable: boolean;
+  status?: string;
+  message?: string;
   timestamp: string;
 }
 
@@ -43,11 +45,24 @@ export default function UsernameChecker() {
       queryClient.invalidateQueries({ queryKey: ['/api/username/recent'] });
       queryClient.invalidateQueries({ queryKey: ['/api/username/stats'] });
       
+      const getStatusTitle = () => {
+        if (data.isAvailable) return "Username Available!";
+        if (data.status === 'censored') return "Username Censored";
+        if (data.status === 'too_short') return "Username Too Short";
+        if (data.status === 'too_long') return "Username Too Long";
+        if (data.status === 'invalid_characters') return "Invalid Characters";
+        return "Username Taken";
+      };
+
+      const getStatusDescription = () => {
+        if (data.isAvailable) return `${data.username} is available for registration`;
+        if (data.message) return `${data.username}: ${data.message}`;
+        return `${data.username} is already taken`;
+      };
+
       toast({
-        title: data.isAvailable ? "Username Available!" : "Username Taken",
-        description: data.isAvailable 
-          ? `${data.username} is available for registration`
-          : `${data.username} is already taken`,
+        title: getStatusTitle(),
+        description: getStatusDescription(),
         variant: data.isAvailable ? "default" : "destructive",
       });
     },
@@ -100,13 +115,35 @@ export default function UsernameChecker() {
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-900">{result.username}</p>
-                <p className={`text-xs ${result.isAvailable ? 'text-success' : 'text-error'}`}>
-                  {result.isAvailable ? 'This username is available!' : 'This username is already taken'}
+                <p className={`text-xs ${result.isAvailable ? 'text-success' : result.status === 'censored' ? 'text-orange-600' : 'text-error'}`}>
+                  {result.isAvailable 
+                    ? 'This username is available!' 
+                    : result.message || 'This username is already taken'
+                  }
                 </p>
               </div>
             </div>
-            <span className={`px-3 py-1 ${result.isAvailable ? 'bg-success text-white' : 'bg-error text-white'} text-xs font-medium rounded-full`}>
-              {result.isAvailable ? 'Available' : 'Taken'}
+            <span className={`px-3 py-1 text-xs font-medium rounded-full ${
+              result.isAvailable 
+                ? 'bg-success text-white' 
+                : result.status === 'censored'
+                  ? 'bg-orange-500 text-white'
+                  : result.status === 'too_short' || result.status === 'too_long' || result.status === 'invalid_characters'
+                    ? 'bg-yellow-500 text-white'
+                    : 'bg-error text-white'
+            }`}>
+              {result.isAvailable 
+                ? 'Available' 
+                : result.status === 'censored'
+                  ? 'Censored'
+                  : result.status === 'too_short'
+                    ? 'Too Short'
+                    : result.status === 'too_long'
+                      ? 'Too Long'
+                      : result.status === 'invalid_characters'
+                        ? 'Invalid'
+                        : 'Taken'
+              }
             </span>
           </div>
         </div>
