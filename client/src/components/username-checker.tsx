@@ -82,18 +82,18 @@ export default function UsernameChecker() {
   const getStatusDisplay = () => {
     if (checkMutation.isPending) {
       return (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-700 rounded-xl p-4 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                <Loader2 className="w-4 h-4 text-white animate-spin" />
+              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-lg">
+                <Loader2 className="w-5 h-5 text-white animate-spin" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">Checking...</p>
-                <p className="text-xs text-blue-600">Please wait while we check availability</p>
+                <p className="text-sm font-semibold text-gray-900 dark:text-white">Checking availability...</p>
+                <p className="text-xs text-blue-600 dark:text-blue-400">Connecting to Roblox servers</p>
               </div>
             </div>
-            <span className="px-3 py-1 bg-blue-200 text-blue-700 text-xs font-medium rounded-full">
+            <span className="px-4 py-2 bg-blue-200 dark:bg-blue-800 text-blue-700 dark:text-blue-200 text-xs font-medium rounded-full animate-pulse">
               In Progress
             </span>
           </div>
@@ -102,39 +102,67 @@ export default function UsernameChecker() {
     }
 
     if (result) {
+      const isAvailable = result.isAvailable;
+      const isCensored = result.status === 'censored';
+      const isInvalid = ['too_short', 'too_long', 'invalid_characters'].includes(result.status || '');
+      
       return (
-        <div className={`${result.isAvailable ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'} border rounded-lg p-4`}>
+        <div className={`${
+          isAvailable 
+            ? 'bg-gradient-to-r from-emerald-50 to-green-50 dark:from-emerald-900/30 dark:to-green-900/30 border-emerald-200 dark:border-emerald-700' 
+            : isCensored
+              ? 'bg-gradient-to-r from-orange-50 to-yellow-50 dark:from-orange-900/30 dark:to-yellow-900/30 border-orange-200 dark:border-orange-700'
+              : isInvalid
+                ? 'bg-gradient-to-r from-yellow-50 to-amber-50 dark:from-yellow-900/30 dark:to-amber-900/30 border-yellow-200 dark:border-yellow-700'
+                : 'bg-gradient-to-r from-red-50 to-pink-50 dark:from-red-900/30 dark:to-pink-900/30 border-red-200 dark:border-red-700'
+        } border rounded-xl p-4 backdrop-blur-sm shadow-lg`}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className={`w-8 h-8 ${result.isAvailable ? 'bg-success' : 'bg-error'} rounded-full flex items-center justify-center`}>
-                {result.isAvailable ? (
-                  <Check className="w-4 h-4 text-white" />
+            <div className="flex items-center space-x-4">
+              <div className={`w-12 h-12 ${
+                isAvailable 
+                  ? 'bg-gradient-to-br from-emerald-500 to-green-500' 
+                  : isCensored
+                    ? 'bg-gradient-to-br from-orange-500 to-yellow-500'
+                    : isInvalid
+                      ? 'bg-gradient-to-br from-yellow-500 to-amber-500'
+                      : 'bg-gradient-to-br from-red-500 to-pink-500'
+              } rounded-full flex items-center justify-center shadow-lg`}>
+                {isAvailable ? (
+                  <Check className="w-6 h-6 text-white" />
                 ) : (
-                  <X className="w-4 h-4 text-white" />
+                  <X className="w-6 h-6 text-white" />
                 )}
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-900">{result.username}</p>
-                <p className={`text-xs ${result.isAvailable ? 'text-success' : result.status === 'censored' ? 'text-orange-600' : 'text-error'}`}>
+                <p className="text-lg font-bold text-gray-900 dark:text-white">{result.username}</p>
+                <p className={`text-sm ${
+                  isAvailable 
+                    ? 'text-emerald-700 dark:text-emerald-300' 
+                    : isCensored 
+                      ? 'text-orange-700 dark:text-orange-300' 
+                      : isInvalid
+                        ? 'text-yellow-700 dark:text-yellow-300'
+                        : 'text-red-700 dark:text-red-300'
+                }`}>
                   {result.isAvailable 
-                    ? 'This username is available!' 
+                    ? 'This username is available for use!' 
                     : result.message || 'This username is already taken'
                   }
                 </p>
               </div>
             </div>
-            <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-              result.isAvailable 
-                ? 'bg-success text-white' 
-                : result.status === 'censored'
+            <span className={`px-4 py-2 text-sm font-bold rounded-full shadow-md ${
+              isAvailable 
+                ? 'bg-emerald-500 text-white' 
+                : isCensored
                   ? 'bg-orange-500 text-white'
-                  : result.status === 'too_short' || result.status === 'too_long' || result.status === 'invalid_characters'
+                  : isInvalid
                     ? 'bg-yellow-500 text-white'
-                    : 'bg-error text-white'
+                    : 'bg-red-500 text-white'
             }`}>
-              {result.isAvailable 
+              {isAvailable 
                 ? 'Available' 
-                : result.status === 'censored'
+                : isCensored
                   ? 'Censored'
                   : result.status === 'too_short'
                     ? 'Too Short'
@@ -151,18 +179,18 @@ export default function UsernameChecker() {
     }
 
     return (
-      <div className="bg-gray-50 rounded-lg p-4">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-800/50 dark:to-gray-700/50 border border-gray-200 dark:border-gray-700 rounded-xl p-4 backdrop-blur-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
-              <Clock className="w-4 h-4 text-gray-600" />
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-gray-400 to-gray-500 dark:from-gray-600 dark:to-gray-700 rounded-full flex items-center justify-center shadow-lg">
+              <Clock className="w-6 h-6 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-900">Ready to check</p>
-              <p className="text-xs text-gray-500">Enter a username above</p>
+              <p className="text-lg font-bold text-gray-900 dark:text-white">Ready to check</p>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Enter a Roblox username above to get started</p>
             </div>
           </div>
-          <span className="px-3 py-1 bg-gray-200 text-gray-700 text-xs font-medium rounded-full">
+          <span className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-sm font-bold rounded-full shadow-md">
             Waiting
           </span>
         </div>
@@ -171,11 +199,13 @@ export default function UsernameChecker() {
   };
 
   return (
-    <Card className="enhanced-card">
+    <Card className="enhanced-card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center space-x-3 mb-6">
-          <Search className="text-roblox-blue" size={20} />
-          <h2 className="text-lg font-semibold text-gray-900">Single Username Check</h2>
+          <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center">
+            <Search className="text-white" size={16} />
+          </div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Single Username Check</h2>
         </div>
         
         <Form {...form}>
@@ -185,7 +215,7 @@ export default function UsernameChecker() {
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <Label htmlFor="username" className="text-sm font-medium text-gray-700">
+                  <Label htmlFor="username" className="text-sm font-semibold text-gray-700 dark:text-gray-300">
                     Enter Username
                   </Label>
                   <FormControl>
@@ -194,23 +224,23 @@ export default function UsernameChecker() {
                         {...field}
                         id="username"
                         placeholder="Enter a Roblox username..."
-                        className="pr-12"
+                        className="pl-4 pr-12 h-12 text-lg border-2 border-gray-200 dark:border-gray-600 rounded-xl bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm focus:border-blue-500 dark:focus:border-blue-400 transition-all duration-200 shadow-sm"
                       />
                       <div className="absolute inset-y-0 right-0 pr-3 flex items-center">
                         {checkMutation.isPending && (
-                          <Loader2 className="h-5 w-5 text-roblox-blue animate-spin" />
+                          <Loader2 className="h-6 w-6 text-blue-500 animate-spin" />
                         )}
                         {result && !checkMutation.isPending && (
                           result.isAvailable ? (
-                            <Check className="h-5 w-5 text-success" />
+                            <Check className="h-6 w-6 text-emerald-500" />
                           ) : (
-                            <X className="h-5 w-5 text-error" />
+                            <X className="h-6 w-6 text-red-500" />
                           )
                         )}
                       </div>
                     </div>
                   </FormControl>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     Username must be 3-20 characters, alphanumeric and underscores only
                   </p>
                   <FormMessage />
@@ -222,17 +252,17 @@ export default function UsernameChecker() {
 
             <Button 
               type="submit"
-              className="w-full bg-roblox-blue text-white hover:bg-roblox-blue/90"
+              className="w-full h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold text-lg rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] transition-all duration-200"
               disabled={checkMutation.isPending}
             >
               {checkMutation.isPending ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Checking...
                 </>
               ) : (
                 <>
-                  <Search className="mr-2 h-4 w-4" />
+                  <Search className="mr-2 h-5 w-5" />
                   Check Username
                 </>
               )}

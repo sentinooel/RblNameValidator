@@ -87,12 +87,27 @@ export default function RecentChecks() {
   }
 
   return (
-    <Card className="enhanced-card">
+    <Card className="enhanced-card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
       <CardContent className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <History className="text-roblox-blue mr-2" size={20} />
-          Recent Checks
-        </h3>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-8 h-8 bg-gradient-to-br from-teal-500 to-cyan-500 rounded-lg flex items-center justify-center">
+              <History className="text-white" size={16} />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white">Recent Checks</h3>
+          </div>
+          {recentChecks.length > 0 && (
+            <Button
+              onClick={() => clearHistoryMutation.mutate()}
+              disabled={clearHistoryMutation.isPending}
+              variant="outline"
+              size="sm"
+              className="hover:bg-red-50 hover:border-red-200 hover:text-red-600"
+            >
+              Clear History
+            </Button>
+          )}
+        </div>
         
         {recentChecks.length === 0 ? (
           <div className="text-center py-8">

@@ -246,7 +246,7 @@ export default function BulkChecker() {
   };
 
   return (
-    <Card className="enhanced-card">
+    <Card className="enhanced-card bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm border-0 shadow-xl hover:shadow-2xl transition-all duration-300">
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-3">
@@ -254,8 +254,8 @@ export default function BulkChecker() {
               <ListChecks className="text-white" size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">Bulk Username Check</h2>
-              <p className="text-sm text-gray-600">Check multiple usernames at once</p>
+              <h2 className="text-xl font-bold text-gray-900 dark:text-white">Bulk Username Check</h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">Check multiple usernames at once</p>
             </div>
           </div>
           {summary && (
