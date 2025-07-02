@@ -60,13 +60,27 @@ export default function BulkChecker() {
 
   const bulkCheckMutation = useMutation({
     mutationFn: async (data: { usernames: string[] }) => {
-      try {
-        const response = await apiRequest("POST", "/api/username/bulk-check", data);
-        return response.json();
-      } catch (error) {
-        console.error('Bulk check API error:', error);
-        throw error;
+      console.log('Starting bulk check for:', data.usernames.length, 'usernames');
+      
+      const response = await fetch("/api/username/bulk-check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      console.log('Bulk check response status:', response.status);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Bulk check error response:', errorText);
+        throw new Error(`Request failed: ${response.status} ${errorText}`);
       }
+
+      const result = await response.json();
+      console.log('Bulk check success:', result);
+      return result;
     },
     onSuccess: (data: BulkResponse) => {
       setResults(data.results);
@@ -88,9 +102,10 @@ export default function BulkChecker() {
       console.error('Bulk check mutation error:', error);
       setProgress(0);
       setSummary(null);
+      setResults([]);
       toast({
         title: "Bulk Check Failed",
-        description: error.message || "Failed to check usernames",
+        description: error?.message || "An unexpected error occurred",
         variant: "destructive",
       });
     },
@@ -98,6 +113,8 @@ export default function BulkChecker() {
 
   const fileUploadMutation = useMutation({
     mutationFn: async (file: File) => {
+      console.log('Starting file upload:', file.name, file.size, 'bytes');
+      
       const formData = new FormData();
       formData.append('file', file);
       
@@ -106,19 +123,24 @@ export default function BulkChecker() {
         body: formData,
       });
       
+      console.log('File upload response status:', response.status);
+      
       if (!response.ok) {
-        let errorMessage = 'Failed to process file';
+        const errorText = await response.text();
+        console.error('File upload error response:', errorText);
+        let errorMessage = `Upload failed: ${response.status}`;
         try {
-          const error = await response.json();
-          errorMessage = error.message || errorMessage;
-        } catch (e) {
-          // If response is not JSON, use the status text
-          errorMessage = response.statusText || errorMessage;
+          const errorJson = JSON.parse(errorText);
+          errorMessage = errorJson.message || errorMessage;
+        } catch {
+          errorMessage = errorText || errorMessage;
         }
         throw new Error(errorMessage);
       }
       
-      return response.json();
+      const result = await response.json();
+      console.log('File upload success:', result);
+      return result;
     },
     onSuccess: (data: BulkResponse) => {
       setResults(data.results);
@@ -137,12 +159,14 @@ export default function BulkChecker() {
       });
     },
     onError: (error: any) => {
+      console.error('File upload mutation error:', error);
       setProgress(0);
       setSummary(null);
+      setResults([]);
       setUploadedFile(null);
       toast({
-        title: "File Processing Failed",
-        description: error.message || "Failed to process file",
+        title: "File Processing Failed", 
+        description: error?.message || "An unexpected error occurred during file processing",
         variant: "destructive",
       });
     },
