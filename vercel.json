@@ -18,10 +18,5 @@
       "src": "/(.*)",
       "dest": "/dist/public/$1"
     }
-  ],
-  "functions": {
-    "dist/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
