@@ -51,7 +51,7 @@ export default function Home() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Single Username Checker */}
           <div className="lg:col-span-2 space-y-8">
@@ -64,34 +64,36 @@ export default function Home() {
             <BulkChecker />
             
             {/* Enhanced Features Info */}
-            <div className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 rounded-xl p-5 shadow-sm">
-              <div className="flex items-start space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-green-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-sm">
-                  <Shield className="text-white" size={16} />
+            <div className="enhanced-card bg-gradient-to-br from-blue-50/50 to-purple-50/50 p-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Shield className="text-white" size={20} />
                 </div>
-                <div>
-                  <h4 className="text-sm font-semibold text-green-800 mb-2">Enhanced Features</h4>
-                  <div className="space-y-1 text-xs text-green-700">
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                <div className="flex-1">
+                  <h4 className="text-lg font-semibold text-gray-800 mb-3">Premium Features</h4>
+                  <div className="space-y-2.5 text-sm text-gray-700">
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
                       <span>Unlimited bulk checking (no limits!)</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
                       <span>File upload support (.txt files up to 5MB)</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
                       <span>Download available usernames as .txt</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    <div className="flex items-center gap-3">
+                      <div className="w-2 h-2 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full"></div>
                       <span>5x faster processing (0.2s delays)</span>
                     </div>
                   </div>
-                  <div className="mt-3 px-3 py-1.5 bg-green-100 rounded-lg">
-                    <span className="text-xs font-medium text-green-800">⚡ Lightning Fast</span>
-                    <span className="text-xs text-green-600 ml-2">Respects Roblox API limits</span>
+                  <div className="mt-4 px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 rounded-lg border border-blue-200/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-semibold text-blue-800">⚡ Lightning Fast</span>
+                      <span className="text-xs text-blue-600">API Optimized</span>
+                    </div>
                   </div>
                 </div>
               </div>

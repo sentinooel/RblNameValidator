@@ -61,7 +61,8 @@
   }
 
   body {
-    @apply font-sans antialiased bg-gradient-to-br from-blue-50 via-white to-purple-50 text-foreground min-h-screen;
+    @apply font-sans antialiased text-foreground min-h-screen;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   }
 }
 
@@ -106,19 +107,69 @@
     background-color: var(--warning);
   }
 
-  /* Enhanced card styling */
+  /* Clean modern card styling */
   .enhanced-card {
-    @apply bg-white/80 backdrop-blur-sm shadow-lg border border-gray-200/50 rounded-xl;
+    @apply bg-white shadow-lg border border-gray-100 rounded-lg;
+    transition: all 0.2s ease;
   }
   
   .enhanced-card:hover {
-    @apply shadow-xl border-gray-300/50;
+    @apply shadow-xl;
     transform: translateY(-2px);
-    transition: all 0.2s ease-in-out;
   }
   
-  /* Gradient backgrounds */
-  .gradient-bg {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  /* Subtle gradient for header */
+  .gradient-text {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Enhanced button styling */
+  .btn-primary {
+    @apply bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700;
+    @apply text-white font-medium px-6 py-3 rounded-lg shadow-md;
+    @apply transform transition-all duration-200 ease-in-out;
+    @apply hover:shadow-lg hover:-translate-y-0.5;
+  }
+  
+  /* Input field enhancements */
+  .input-enhanced {
+    @apply transition-all duration-200 ease-in-out;
+    @apply focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50;
+    @apply focus:border-blue-500;
+  }
+  
+  /* Results styling */
+  .result-available {
+    @apply bg-green-50 border-green-200 text-green-800;
+    @apply border-l-4 border-l-green-500 pl-4;
+  }
+  
+  .result-taken {
+    @apply bg-red-50 border-red-200 text-red-800;
+    @apply border-l-4 border-l-red-500 pl-4;
+  }
+  
+  /* Fade-in animation for new content */
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Loading animation */
+  .loading-dots {
+    animation: loadingDots 1.5s infinite;
+  }
+  
+  @keyframes loadingDots {
+    0%, 20% { color: rgba(0,0,0,0.4); }
+    50% { color: rgba(0,0,0,0.8); }
+    80%, 100% { color: rgba(0,0,0,0.4); }
   }
 }
