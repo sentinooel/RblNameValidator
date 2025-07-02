@@ -15,9 +15,9 @@ export default function UsageStats() {
   });
 
   return (
-    <Card className="bg-white dark:bg-gray-800">
+    <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700">
       <CardHeader>
-        <CardTitle>Statistics</CardTitle>
+        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">Usage Statistics</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-4 text-center">

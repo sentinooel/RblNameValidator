@@ -66,11 +66,10 @@ export default function UsernameChecker() {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800">
-      <CardHeader>
-        <CardTitle className="flex items-center space-x-2">
-          <Search className="w-5 h-5" />
-          <span>Check Username</span>
+    <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+          Check Username Availability
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

@@ -246,21 +246,19 @@ export default function BulkChecker() {
   };
 
   return (
-    <Card className="bg-white dark:bg-gray-800">
+    <Card className="bg-white dark:bg-gray-800 shadow-sm border border-gray-200 dark:border-gray-700">
       <CardContent className="p-6">
-        <div className="flex items-center space-x-2 mb-4">
-          <ListChecks className="w-5 h-5" />
-          <h2 className="text-xl font-bold">Bulk Check</h2>
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">Bulk Username Check</h2>
+          <p className="text-sm text-gray-600 dark:text-gray-400">Check multiple usernames at once</p>
         </div>
         
         <Tabs defaultValue="manual" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="manual" className="flex items-center gap-2">
-              <FileText size={16} />
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 dark:bg-gray-700">
+            <TabsTrigger value="manual">
               Text Input
             </TabsTrigger>
-            <TabsTrigger value="file" className="flex items-center gap-2">
-              <Upload size={16} />
+            <TabsTrigger value="file">
               File Upload
             </TabsTrigger>
           </TabsList>

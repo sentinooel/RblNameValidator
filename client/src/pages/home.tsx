@@ -31,7 +31,7 @@ export default function Home() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <RobloxLogo size={32} />
-              <h1 className="text-xl font-bold text-gray-900 dark:text-white">Username Checker</h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">RobloxCheck</h1>
             </div>
             <div className="flex items-center space-x-3">
               <div className="flex items-center space-x-2 text-sm">
