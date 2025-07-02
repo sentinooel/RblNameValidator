@@ -134,7 +134,7 @@ export default function UsernameChecker() {
   };
 
   return (
-    <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <Card className="enhanced-card">
       <CardContent className="p-6">
         <div className="flex items-center space-x-3 mb-6">
           <Search className="text-roblox-blue" size={20} />

@@ -180,7 +180,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Add delay between requests to avoid hitting Roblox rate limits
           if (processed < validatedUsernames.length) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 200));
           }
         } catch (error) {
           results.push({
@@ -296,7 +296,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           
           // Add delay between requests to avoid hitting Roblox rate limits
           if (processed < validatedUsernames.length) {
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            await new Promise(resolve => setTimeout(resolve, 200));
           }
         } catch (error) {
           results.push({

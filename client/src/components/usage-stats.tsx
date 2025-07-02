@@ -49,7 +49,7 @@ export default function UsageStats() {
   return (
     <div className="mt-8 grid grid-cols-1 md:grid-cols-4 gap-6">
       {statItems.map((item, index) => (
-        <Card key={index} className="bg-white rounded-xl shadow-sm border border-gray-200 text-center">
+        <Card key={index} className="enhanced-card text-center">
           <CardContent className="p-6">
             <div className={`w-12 h-12 ${item.bgColor} rounded-lg flex items-center justify-center mx-auto mb-3`}>
               <item.icon className={item.iconColor} size={24} />

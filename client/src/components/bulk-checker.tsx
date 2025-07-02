@@ -212,8 +212,39 @@ export default function BulkChecker() {
     URL.revokeObjectURL(url);
   };
 
+  const downloadAvailableUsernames = () => {
+    const availableUsernames = results
+      .filter(r => r.isAvailable === true)
+      .map(r => r.username);
+    
+    if (availableUsernames.length === 0) {
+      toast({
+        title: "No available usernames",
+        description: "There are no available usernames to download",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const content = availableUsernames.join('\n');
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `available-roblox-usernames-${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Download Complete",
+      description: `Downloaded ${availableUsernames.length} available usernames`,
+    });
+  };
+
   return (
-    <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <Card className="enhanced-card">
       <CardContent className="p-6">
         <div className="flex items-center space-x-3 mb-6">
           <ListChecks className="text-roblox-blue" size={20} />
@@ -414,14 +445,25 @@ export default function BulkChecker() {
         )}
 
         {results.length > 0 && (
-          <Button 
-            onClick={exportResults}
-            variant="outline"
-            className="w-full mt-4"
-          >
-            <Download className="mr-2 h-4 w-4" />
-            Export Results as CSV
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 mt-4">
+            <Button 
+              onClick={exportResults}
+              variant="outline"
+              className="flex-1"
+            >
+              <Download className="mr-2 h-4 w-4" />
+              Export All Results (CSV)
+            </Button>
+            {results.some(r => r.isAvailable === true) && (
+              <Button 
+                onClick={downloadAvailableUsernames}
+                className="flex-1 bg-success text-white hover:bg-success/90"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download Available (.txt)
+              </Button>
+            )}
+          </div>
         )}
       </CardContent>
     </Card>

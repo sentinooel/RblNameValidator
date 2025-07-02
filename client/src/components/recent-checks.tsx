@@ -19,7 +19,7 @@ export default function RecentChecks() {
 
   if (isLoading) {
     return (
-      <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+      <Card className="enhanced-card">
         <CardContent className="p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
             <History className="text-roblox-blue mr-2" size={20} />
@@ -47,7 +47,7 @@ export default function RecentChecks() {
   }
 
   return (
-    <Card className="bg-white rounded-xl shadow-sm border border-gray-200">
+    <Card className="enhanced-card">
       <CardContent className="p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
           <History className="text-roblox-blue mr-2" size={20} />
