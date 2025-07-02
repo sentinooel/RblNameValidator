@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { UserCheck, Clock, Shield } from "lucide-react";
+import { RobloxLogo } from "@/components/logo";
 import UsernameChecker from "@/components/username-checker";
 import BulkChecker from "@/components/bulk-checker";
 import RecentChecks from "@/components/recent-checks";
@@ -28,9 +29,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-gradient-to-br from-roblox-blue to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-                <UserCheck className="text-white" size={24} />
-              </div>
+              <RobloxLogo size={48} className="drop-shadow-lg" />
               <div>
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-roblox-blue to-purple-600 bg-clip-text text-transparent">
                   Roblox Username Checker

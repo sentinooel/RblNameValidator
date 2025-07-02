@@ -246,18 +246,39 @@ export default function BulkChecker() {
   return (
     <Card className="enhanced-card">
       <CardContent className="p-6">
-        <div className="flex items-center space-x-3 mb-6">
-          <ListChecks className="text-roblox-blue" size={20} />
-          <h2 className="text-lg font-semibold text-gray-900">Bulk Username Check</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center shadow-lg">
+              <ListChecks className="text-white" size={20} />
+            </div>
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900">Bulk Username Check</h2>
+              <p className="text-sm text-gray-600">Check multiple usernames at once</p>
+            </div>
+          </div>
+          {summary && (
+            <div className="flex items-center space-x-2 bg-green-50 px-3 py-1 rounded-full">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="text-sm text-green-700 font-medium">
+                {summary.processed || 0} processed
+              </span>
+            </div>
+          )}
         </div>
         
         <Tabs defaultValue="manual" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="manual" className="flex items-center gap-2">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
+            <TabsTrigger 
+              value="manual" 
+              className="flex items-center gap-2 px-4 py-2 rounded-md transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
               <FileText size={16} />
               Manual Input
             </TabsTrigger>
-            <TabsTrigger value="file" className="flex items-center gap-2">
+            <TabsTrigger 
+              value="file" 
+              className="flex items-center gap-2 px-4 py-2 rounded-md transition-all data-[state=active]:bg-white data-[state=active]:shadow-sm"
+            >
               <Upload size={16} />
               File Upload
             </TabsTrigger>
@@ -384,32 +405,63 @@ export default function BulkChecker() {
           </TabsContent>
         </Tabs>
 
-        {/* Summary */}
+        {/* Enhanced Summary */}
         {summary && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mt-4">
-            <h4 className="text-sm font-semibold text-blue-800 mb-2">Processing Summary</h4>
-            <div className="grid grid-cols-2 gap-2 text-xs">
-              <div>Total: <span className="font-medium">{summary.total}</span></div>
-              <div>Processed: <span className="font-medium">{summary.processed}</span></div>
-              <div className="text-success">Available: <span className="font-medium">{summary.available}</span></div>
-              <div className="text-error">Taken: <span className="font-medium">{summary.taken}</span></div>
-              {summary.errors > 0 && (
-                <div className="text-warning col-span-2">Errors: <span className="font-medium">{summary.errors}</span></div>
-              )}
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200/50 rounded-xl p-5 mt-6 shadow-sm">
+            <div className="flex items-center justify-between mb-4">
+              <h4 className="text-lg font-semibold text-gray-800">Processing Summary</h4>
+              <div className="flex items-center space-x-2">
+                <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-sm text-blue-700 font-medium">Complete</span>
+              </div>
             </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-3 bg-white/60 rounded-lg">
+                <div className="text-2xl font-bold text-gray-800">{summary.total}</div>
+                <div className="text-xs text-gray-600">Total</div>
+              </div>
+              <div className="text-center p-3 bg-white/60 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{summary.processed}</div>
+                <div className="text-xs text-gray-600">Processed</div>
+              </div>
+              <div className="text-center p-3 bg-white/60 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">{summary.available}</div>
+                <div className="text-xs text-gray-600">Available</div>
+              </div>
+              <div className="text-center p-3 bg-white/60 rounded-lg">
+                <div className="text-2xl font-bold text-red-600">{summary.taken}</div>
+                <div className="text-xs text-gray-600">Taken</div>
+              </div>
+            </div>
+            {summary.errors > 0 && (
+              <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  <span className="text-sm font-medium text-yellow-800">
+                    {summary.errors} error{summary.errors !== 1 ? 's' : ''} occurred during processing
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* Progress indicator */}
+        {/* Enhanced Progress indicator */}
         {(bulkCheckMutation.isPending || fileUploadMutation.isPending) && (
-          <div className="bg-gray-50 rounded-lg p-3 mt-4">
-            <div className="flex items-center justify-between text-sm mb-2">
-              <span className="text-gray-600">Progress</span>
-              <span className="text-gray-900 font-medium">
-                {results.length} processed
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200/50 rounded-xl p-4 mt-6">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center space-x-2">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+                <span className="text-sm font-medium text-gray-700">Processing usernames...</span>
+              </div>
+              <span className="text-sm font-bold text-blue-600">
+                {results.length} completed
               </span>
             </div>
-            <Progress value={progress} className="h-2" />
+            <Progress value={progress} className="h-3 bg-white/50" />
+            <div className="mt-2 text-xs text-gray-600 text-center">
+              Fast processing with 0.2s delays between checks
+            </div>
           </div>
         )}
 
@@ -445,24 +497,33 @@ export default function BulkChecker() {
         )}
 
         {results.length > 0 && (
-          <div className="flex flex-col sm:flex-row gap-2 mt-4">
-            <Button 
-              onClick={exportResults}
-              variant="outline"
-              className="flex-1"
-            >
-              <Download className="mr-2 h-4 w-4" />
-              Export All Results (CSV)
-            </Button>
-            {results.some(r => r.isAvailable === true) && (
+          <div className="mt-6 p-4 bg-gradient-to-r from-green-50 to-blue-50 border border-green-200/50 rounded-xl">
+            <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+              <Download className="w-4 h-4 text-green-600" />
+              Download Results
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Button 
-                onClick={downloadAvailableUsernames}
-                className="flex-1 bg-success text-white hover:bg-success/90"
+                onClick={exportResults}
+                variant="outline"
+                className="flex-1 border-gray-300 hover:bg-gray-50 transition-all duration-200"
               >
-                <Download className="mr-2 h-4 w-4" />
-                Download Available (.txt)
+                <FileText className="mr-2 h-4 w-4" />
+                Export All (CSV)
               </Button>
-            )}
+              {results.some(r => r.isAvailable === true) && (
+                <Button 
+                  onClick={downloadAvailableUsernames}
+                  className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white shadow-md hover:shadow-lg transition-all duration-200"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Available Only (.txt)
+                </Button>
+              )}
+            </div>
+            <p className="text-xs text-gray-600 mt-2 text-center">
+              CSV includes all data • TXT contains only available usernames
+            </p>
           </div>
         )}
       </CardContent>
